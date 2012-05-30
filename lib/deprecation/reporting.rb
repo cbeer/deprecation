@@ -12,11 +12,11 @@ module Deprecation
     end
 
     # Silence deprecation warnings within the block.
-    def silence
-      old_silenced, @silenced = @silenced, true
+    def silence context
+      old_silenced, context.silenced = context.silenced, true
       yield
     ensure
-      @silenced = old_silenced
+      context.silenced = old_silenced
     end
 
     def collect(context)
