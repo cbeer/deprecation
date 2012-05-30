@@ -1,13 +1,13 @@
 module Deprecation
-  module ClassMethods
+  class << self
     # Outputs a deprecation warning to the output configured by <tt>ActiveSupport::Deprecation.behavior</tt>
     #
     #   Deprecation.warn("something broke!")
     #   # => "DEPRECATION WARNING: something broke! (called from your_code.rb:1)"
-    def warn(message = nil, callstack = caller)
-      return if silenced
+    def warn(context, message = nil, callstack = caller)
+      return if context.silenced
       deprecation_message(callstack, message).tap do |m|
-        deprecation_behavior.each { |b| b.call(m, callstack) }
+        context.deprecation_behavior.each { |b| b.call(m, callstack) }
       end
     end
 
@@ -19,19 +19,19 @@ module Deprecation
       @silenced = old_silenced
     end
 
-    def collect
-      old_behavior = self.class.deprecation_behavior
+    def collect(context)
+      old_behavior = context.deprecation_behavior
       deprecations = []
-      self.deprecation_behavior = Proc.new do |message, callstack|
+      context.deprecation_behavior = Proc.new do |message, callstack|
         deprecations << message
       end
       result = yield
       [result, deprecations]
     ensure
-      self.class.deprecation_behavior = old_behavior
+      context.deprecation_behavior = old_behavior
     end
 
-    def deprecated_method_warning(method_name, options = nil)
+    def deprecated_method_warning(context, method_name, options = nil)
 
       options ||= {}
 
@@ -40,7 +40,7 @@ module Deprecation
         options = {}
       end
 
-      warning = "#{method_name} is deprecated and will be removed from #{options[:deprecation_horizon] || deprecation_horizon}"
+      warning = "#{method_name} is deprecated and will be removed from #{options[:deprecation_horizon] || context.deprecation_horizon}"
       case message
         when Symbol then "#{warning} (use #{message} instead)"
         when String then "#{warning} (#{message})"

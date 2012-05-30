@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Deprecation do
   class DeprecationTest
-    include Deprecation
+    extend Deprecation
     self.deprecation_behavior = :raise
 
     self.deprecation_horizon = 'release 0.1'
@@ -12,7 +12,7 @@ describe Deprecation do
       1 
     end
 
-    deprecate :a
+    deprecation_deprecate :a
 
     def b
       
@@ -26,12 +26,12 @@ describe Deprecation do
 
     end
     
-    deprecate :c, :d
+    deprecation_deprecate :c, :d
 
     def e
 
     end
-    deprecate :e => { :deprecation_horizon => 'asdf 1.4' }
+    deprecation_deprecate :e => { :deprecation_horizon => 'asdf 1.4' }
   end
   subject { DeprecationTest.new}
 

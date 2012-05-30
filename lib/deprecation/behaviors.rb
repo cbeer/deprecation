@@ -2,7 +2,6 @@ require "active_support/notifications"
 require "active_support/concern"
 
 module Deprecation
-  module ClassMethods
 
     # Returns the current behavior or if one isn't set, defaults to +:stderr+
     def deprecation_behavior
@@ -32,7 +31,6 @@ module Deprecation
     def deprecation_behavior=(deprecation_behavior)
       @deprecation_behavior = Array(deprecation_behavior).map { |b| Deprecation.behaviors(self)[b] || b }
     end
-  end
 
   def self.deprecations
     @deprecations ||= []
