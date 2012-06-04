@@ -1,5 +1,6 @@
 module Deprecation
   class << self
+    attr_accessor :show_full_callstack
     # Outputs a deprecation warning to the output configured by <tt>ActiveSupport::Deprecation.behavior</tt>
     #
     #   Deprecation.warn("something broke!")
@@ -56,6 +57,9 @@ module Deprecation
       end
 
       def deprecation_caller_message(callstack)
+        if Deprecation.show_full_callstack
+          return "(Callstack: #{callstack.join "\n\t"})"
+        end
         file, line, method = extract_callstack(callstack)
         if file
           if line && method

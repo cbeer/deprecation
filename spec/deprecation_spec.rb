@@ -59,4 +59,19 @@ describe Deprecation do
       expect { subject.e }.to raise_error /e is deprecated and will be removed from asdf 1.4/
     end
   end
+
+  describe "full callstack" do
+    before(:all) do
+      Deprecation.show_full_callstack = true
+    end
+
+    after(:all) do
+      Deprecation.show_full_callstack = false
+    end
+
+    it "should" do
+      expect { subject.a }.to raise_error /Callstack:/
+    end
+
+  end
 end
