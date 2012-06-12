@@ -3,9 +3,15 @@ require "active_support/concern"
 
 module Deprecation
 
+  class <<self
+    attr_accessor :default_deprecation_behavior
+  end
+
+    self.default_deprecation_behavior = :stderr
+
     # Returns the current behavior or if one isn't set, defaults to +:stderr+
     def deprecation_behavior
-      @deprecation_behavior ||= [Deprecation.behaviors(self)[:stderr]]
+      @deprecation_behavior ||= [Deprecation.behaviors(self)[Deprecation.default_deprecation_behavior]]
     end
 
     # Sets the behavior to the specified value. Can be a single value, array, or
