@@ -11,6 +11,12 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec
+
 
 task :console do
   sh "irb -rubygems -I lib -r deprecation.rb"
