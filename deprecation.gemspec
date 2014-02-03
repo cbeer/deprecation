@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.summary = %q{Stand-alone deprecation library borrowed from ActiveSupport::Deprecation}
   s.description = %q{Stand-alone deprecation library borrowed from ActiveSupport::Deprecation}
   s.homepage = "http://github.com/cbeer/deprecation"
+  s.license = "MIT"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
