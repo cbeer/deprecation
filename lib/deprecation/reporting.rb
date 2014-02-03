@@ -28,10 +28,13 @@ module Deprecation
 
     # Silence deprecation warnings within the block.
     def silence context
-      old_silenced, context.silenced = context.silenced, true
+      if context.respond_to? :silenced=
+        old_silenced, context.silenced = context.silenced, true
+      end
+
       yield
     ensure
-      context.silenced = old_silenced
+      context.silenced = old_silenced if context.respond_to? :silenced=
     end
 
     def collect(context)
