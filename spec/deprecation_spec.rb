@@ -74,4 +74,30 @@ describe Deprecation do
     end
 
   end
+
+  describe "warn" do
+    class A
+      def some_deprecated_method
+        Deprecation.warn(A, "some explicit deprecation warning")
+        true
+      end
+
+      def old_method
+        some_deprecated_method
+      end
+    end
+
+    let(:logger) { double() }
+
+    before(:each) do
+      Deprecation.stub logger: logger
+      Deprecation.stub default_deprecation_behavior: :log
+    end
+
+    it "should provide a useful deprecation trace" do
+      logger.should_receive(:warn).with(/called from old_method/)
+      expect(A.new.old_method).to be_true
+
+    end
+  end
 end

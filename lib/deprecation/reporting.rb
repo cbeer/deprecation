@@ -5,10 +5,24 @@ module Deprecation
     #
     #   Deprecation.warn("something broke!")
     #   # => "DEPRECATION WARNING: something broke! (called from your_code.rb:1)"
-    def warn(context, message = nil, callstack = caller)
-      return if context.silenced
+    def warn(context, message = nil, callstack = nil)
+      return if context.respond_to? :silenced? and context.silenced?
+
+      if callstack.nil?
+        callstack = caller
+        callstack.shift
+      end
+
       deprecation_message(callstack, message).tap do |m|
-        context.deprecation_behavior.each { |b| b.call(m, callstack) }
+        deprecation_behavior(context).each { |b| b.call(m, callstack) }
+      end
+    end
+
+    def deprecation_behavior context
+      if context.respond_to? :deprecation_behavior
+        context.deprecation_behavior 
+      else
+        [Deprecation.behaviors(self)[Deprecation.default_deprecation_behavior]]
       end
     end
 

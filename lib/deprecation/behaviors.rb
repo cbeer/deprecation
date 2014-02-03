@@ -47,12 +47,12 @@ module Deprecation
   {
     :stderr => Proc.new { |message, callstack|
        $stderr.puts(message)
-       $stderr.puts callstack.join("\n  ") if klass.debug
+       $stderr.puts callstack.join("\n  ") if klass.respond_to? :debug and klass.debug
      },
     :log => Proc.new { |message, callstack|
        logger = Deprecation.logger
        logger.warn message
-       logger.debug callstack.join("\n  ") if klass.debug
+       logger.debug callstack.join("\n  ") if klass.respond_to? :debug and klass.debug
      },
      :notify => Proc.new { |message, callstack|
         ActiveSupport::Notifications.instrument("deprecation.#{klass.to_s}",
