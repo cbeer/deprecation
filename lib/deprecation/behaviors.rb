@@ -50,13 +50,7 @@ module Deprecation
        $stderr.puts callstack.join("\n  ") if klass.debug
      },
     :log => Proc.new { |message, callstack|
-       logger =
-         if defined?(Rails) && Rails.logger
-           Rails.logger
-         else
-           require 'active_support/logger'
-           ActiveSupport::Logger.new($stderr)
-         end
+       logger = Deprecation.logger
        logger.warn message
        logger.debug callstack.join("\n  ") if klass.debug
      },

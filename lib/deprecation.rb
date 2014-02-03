@@ -34,6 +34,19 @@ module Deprecation
     @debug = bool
   end
 
+  def self.logger
+    @logger ||= if defined?(Rails) && Rails.logger
+      Rails.logger
+    else
+      require 'active_support/logger'
+      ActiveSupport::Logger.new($stderr)
+    end
+  end
+
+  def self.logger= value
+    @logger = value
+  end
+
   included do
     class << self
     end
