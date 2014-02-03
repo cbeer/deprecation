@@ -19,6 +19,8 @@ module Deprecation
     @silenced
   end
 
+  alias_method :silenced?, :silenced
+
   def silenced= bool
     @silenced = bool
   end
@@ -26,6 +28,7 @@ module Deprecation
   def debug
     @debug
   end
+  alias_method :debug?, :debug
 
   def debug= bool
     @debug = bool
