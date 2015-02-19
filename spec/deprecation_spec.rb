@@ -43,7 +43,7 @@ describe Deprecation do
 
   describe "b" do
     it "should not be deprecated" do
-      expect { subject.b }.not_to raise_error /b is deprecated/
+      expect { subject.b }.not_to raise_error
     end
   end
 
@@ -96,7 +96,7 @@ describe Deprecation do
 
     it "should provide a useful deprecation trace" do
       logger.should_receive(:warn).with(/called from old_method/)
-      expect(A.new.old_method).to be_true
+      expect(A.new.old_method).to eq true
 
     end
   end
