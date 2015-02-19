@@ -1,5 +1,9 @@
 module Deprecation
+  ACTIVESUPPORT_CONCERN_REGEX = %r{/lib/active_support/concern.rb}
+  IGNORE_REGEX = Regexp.union(ACTIVESUPPORT_CONCERN_REGEX)
+
   class << self
+
     attr_accessor :show_full_callstack
     # Outputs a deprecation warning to the output configured by <tt>ActiveSupport::Deprecation.behavior</tt>
     #
@@ -89,7 +93,7 @@ module Deprecation
 
       def extract_callstack(callstack)
         deprecation_gem_root = File.expand_path("../..", __FILE__) + "/"
-        offending_line = callstack.find { |line| !line.start_with?(deprecation_gem_root) } || callstack.first
+        offending_line = callstack.find { |line| !line.start_with?(deprecation_gem_root) and line !~ IGNORE_REGEX } || callstack.first
         if offending_line
           if md = offending_line.match(/^(.+?):(\d+)(?::in `(.*?)')?/)
             md.captures

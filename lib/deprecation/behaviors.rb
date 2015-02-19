@@ -39,7 +39,7 @@ module Deprecation
     end
 
   def self.deprecations
-    @deprecations ||= []
+    @deprecations ||= {}
   end
 
     def self.behaviors klass
@@ -60,7 +60,24 @@ module Deprecation
      },
      :raise => Proc.new { |message, callstack| raise message },
      :silence => Proc.new { |message, callstack| },
-     :test => Proc.new { |message, callstack| self.deprecations << message }
+     :test => Proc.new do |message, callstack| 
+        hash = message.hash + callstack[0..2].join("\n").hash
+        unless self.deprecations[hash]
+          self.deprecations[hash] = { message: message, callstack: callstack, count: 1 }
+        else
+          self.deprecations[hash][:count] += 1
+        end
+      end,
+     :stderr_report => Proc.new do |message, callstack|
+        hash = message.hash + callstack[0..2].join("\n").hash
+        unless self.deprecations[hash]
+          self.deprecations[hash] = { message: message, callstack: callstack, count: 1 }
+          $stderr.puts(message)
+          $stderr.puts callstack.join("\n  ") if klass.respond_to? :debug and klass.debug
+        else
+          self.deprecations[hash][:count] += 1
+        end
+      end
   }
     end
 end

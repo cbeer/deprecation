@@ -3,6 +3,7 @@ require 'deprecation/reporting'
 require 'deprecation/method_wrappers'
 require 'active_support/concern'
 require 'deprecation/core_ext/module/deprecation'
+require 'deprecation/rspec'
 
 module Deprecation
   extend ActiveSupport::Concern
