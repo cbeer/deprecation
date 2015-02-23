@@ -18,7 +18,7 @@ module Deprecation
       end
 
       deprecation_message(callstack, message).tap do |m|
-        deprecation_behavior(context).each { |b| b.call(m, callstack) }
+        deprecation_behavior(context).each { |b| b.call(m, sanitized_callstack(callstack)) }
       end
     end
 
@@ -92,8 +92,7 @@ module Deprecation
       end
 
       def extract_callstack(callstack)
-        deprecation_gem_root = File.expand_path("../..", __FILE__) + "/"
-        offending_line = callstack.find { |line| !line.start_with?(deprecation_gem_root) and line !~ IGNORE_REGEX } || callstack.first
+        offending_line = sanitized_callstack(callstack).first || callstack.first
         if offending_line
           if md = offending_line.match(/^(.+?):(\d+)(?::in `(.*?)')?/)
             md.captures
@@ -101,6 +100,14 @@ module Deprecation
             offending_line
           end
         end
+      end
+
+      def sanitized_callstack(callstack)
+        callstack.reject { |line| line.start_with? deprecation_gem_root}.select { |line| (line =~ IGNORE_REGEX).nil? }
+      end
+
+      def deprecation_gem_root
+        File.expand_path("../..", __FILE__) + "/"
       end
   end
 end
