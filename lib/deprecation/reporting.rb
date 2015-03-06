@@ -62,7 +62,7 @@ module Deprecation
         options = {}
       end
 
-      warning = "#{method_name} is deprecated and will be removed from #{options[:deprecation_horizon] || context.deprecation_horizon}"
+      warning = "#{method_name} is deprecated and will be removed from #{options[:deprecation_horizon] || (context.deprecation_horizon if context.respond_to? :deprecation_horizon) || "a future release"}"
       case message
         when Symbol then "#{warning} (use #{message} instead)"
         when String then "#{warning} (#{message})"
