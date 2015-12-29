@@ -90,8 +90,7 @@ describe Deprecation do
     let(:logger) { double() }
 
     before(:each) do
-      Deprecation.stub logger: logger
-      Deprecation.stub default_deprecation_behavior: :log
+      allow(Deprecation).to receive_messages(logger: logger, default_deprecation_behavior: :log)
     end
 
     it "should provide a useful deprecation trace" do
