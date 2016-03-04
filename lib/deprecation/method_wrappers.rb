@@ -7,20 +7,20 @@ module Deprecation
     options = method_names.extract_options!
     method_names += options.keys
 
+    generated_deprecation_methods = Module.new
     method_names.each do |method_name|
-      target_module.alias_method_chain(method_name, :deprecation) do |target, punctuation|
-        target_module.module_eval(<<-end_eval, __FILE__, __LINE__ + 1)
-          def #{target}_with_deprecation#{punctuation}(*args, &block)
-            Deprecation.warn(#{target_module.to_s},
-              Deprecation.deprecated_method_warning(#{target_module.to_s},
-                :#{method_name},
-                #{options[method_name].inspect}),
-              caller
-            )
-            send(:#{target}_without_deprecation#{punctuation}, *args, &block)
-          end
-        end_eval
-      end
+      generated_deprecation_methods.module_eval(<<-end_eval, __FILE__, __LINE__ + 1)
+        def #{method_name}(*args, &block)
+          Deprecation.warn(#{target_module.to_s},
+            Deprecation.deprecated_method_warning(#{target_module.to_s},
+              :#{method_name},
+              #{options[method_name].inspect}),
+            caller
+          )
+          super
+        end
+      end_eval
     end
+    target_module.prepend generated_deprecation_methods
   end
 end
