@@ -49,9 +49,6 @@ module Deprecation
   end
 
   included do
-    class << self
-    end
-
     # By default, warnings are not silenced and debugging is off.
     self.silenced = false
     self.debug = false
