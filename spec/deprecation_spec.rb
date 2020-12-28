@@ -9,13 +9,13 @@ describe Deprecation do
 
 
     def a
-      1 
+      1
     end
 
     deprecation_deprecate :a
 
     def b
-      
+
     end
 
     def c
@@ -25,19 +25,38 @@ describe Deprecation do
     def d
 
     end
-    
+
     deprecation_deprecate :c, :d
 
     def e
 
     end
     deprecation_deprecate :e => { :deprecation_horizon => 'asdf 1.4' }
+
+
+    def f(x, foo: nil)
+      7
+    end
+    deprecation_deprecate :f
   end
   subject { DeprecationTest.new}
 
   describe "a" do
     it "should be deprecated" do
       expect { subject.a }.to raise_error /a is deprecated/
+    end
+  end
+
+  describe "a method that takes positional args and keyword args" do
+    around do |example|
+      # We need to suppress the raise behavior, so we can ensure the original method is called
+      DeprecationTest.deprecation_behavior = :silence
+      example.run
+      DeprecationTest.deprecation_behavior = :raise
+    end
+
+    it "delegates to the original" do
+      expect(subject.f 9, foo: 3).to eq 7
     end
   end
 

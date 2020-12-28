@@ -10,7 +10,7 @@ module Deprecation
     generated_deprecation_methods = Module.new
     method_names.each do |method_name|
       generated_deprecation_methods.module_eval(<<-end_eval, __FILE__, __LINE__ + 1)
-        def #{method_name}(*args, &block)
+        def #{method_name}(*args, **kwargs, &block)
           Deprecation.warn(#{target_module.to_s},
             Deprecation.deprecated_method_warning(#{target_module.to_s},
               :#{method_name},
