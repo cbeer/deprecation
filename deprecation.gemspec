@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/cbeer/deprecation"
   s.license = "MIT"
 
-  s.required_ruby_version = '~> 2.1'
+  s.required_ruby_version = '>= 2.1'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -25,4 +25,3 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec", ">= 2.14"
   s.add_development_dependency "bundler", ">= 1.0.14"
 end
-
