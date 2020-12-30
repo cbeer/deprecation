@@ -1,7 +1,5 @@
 Deprecation
 ------------
-[![Build Status](https://travis-ci.org/cbeer/deprecation.png?branch=master)](https://travis-ci.org/cbeer/deprecation)
-
 Provide deprecation warnings for code
 
 ## Add warnings
