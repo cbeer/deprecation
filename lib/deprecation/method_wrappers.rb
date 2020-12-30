@@ -17,7 +17,11 @@ module Deprecation
               #{options[method_name].inspect}),
             caller
           )
-          super
+          if RUBY_VERSION < '2.7' && kwargs.empty?
+            super(*args, &block)
+          else
+            super
+          end
         end
       end_eval
     end
