@@ -23,7 +23,7 @@ describe Deprecation do
     end
 
     def d
-
+      4
     end
 
     deprecation_deprecate :c, :d
@@ -57,6 +57,19 @@ describe Deprecation do
 
     it "delegates to the original" do
       expect(subject.f 9, foo: 3).to eq 7
+    end
+  end
+
+  describe "a method that takes no args" do
+    around do |example|
+      # We need to suppress the raise behavior, so we can ensure the original method is called
+      DeprecationTest.deprecation_behavior = :silence
+      example.run
+      DeprecationTest.deprecation_behavior = :raise
+    end
+
+    it "delegates to the original" do
+      expect(subject.d).to eq 4
     end
   end
 
