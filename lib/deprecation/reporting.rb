@@ -24,7 +24,7 @@ module Deprecation
 
     def deprecation_behavior context
       if context.respond_to? :deprecation_behavior
-        context.deprecation_behavior 
+        context.deprecation_behavior
       else
         [Deprecation.behaviors(self)[Deprecation.default_deprecation_behavior]]
       end
@@ -94,7 +94,7 @@ module Deprecation
       def extract_callstack(callstack)
         offending_line = sanitized_callstack(callstack).first || callstack.first
         if offending_line
-          if md = offending_line.match(/^(.+?):(\d+)(?::in `(.*?)')?/)
+          if md = offending_line.match(/^(.+?):(\d+)(?::in [`'](.*?)')?/)
             md.captures
           else
             offending_line

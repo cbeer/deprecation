@@ -126,7 +126,7 @@ describe Deprecation do
     end
 
     it "should provide a useful deprecation trace" do
-      expect(logger).to receive(:warn).with(/called from old_method/)
+      expect(logger).to receive(:warn).with(/called from (A#)?old_method/)
       expect(A.new.old_method).to eq true
 
     end
