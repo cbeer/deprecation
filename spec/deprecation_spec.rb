@@ -7,7 +7,6 @@ describe Deprecation do
 
     self.deprecation_horizon = 'release 0.1'
 
-
     def a
       1
     end
@@ -31,15 +30,17 @@ describe Deprecation do
     def e
 
     end
-    deprecation_deprecate :e => { :deprecation_horizon => 'asdf 1.4' }
 
+    deprecation_deprecate :e => { :deprecation_horizon => 'asdf 1.4' }
 
     def f(x, foo: nil)
       7
     end
+
     deprecation_deprecate :f
   end
-  subject { DeprecationTest.new}
+
+  subject { DeprecationTest.new }
 
   describe "a" do
     it "should be deprecated" do
@@ -128,7 +129,61 @@ describe Deprecation do
     it "should provide a useful deprecation trace" do
       expect(logger).to receive(:warn).with(/called from (A#)?old_method/)
       expect(A.new.old_method).to eq true
-
     end
   end
+
+  describe "deprecate_method" do
+    let(:logger) { double() }
+
+    before do
+      allow(Deprecation).to receive_messages(logger: logger, default_deprecation_behavior: :log)
+
+      class B
+        def some_deprecated_method
+          true
+        end
+
+        def old_method
+          some_deprecated_method
+        end
+      end
+    end
+
+    after do
+      Object.send(:remove_const, :B)
+    end
+
+    RSpec::Matchers.define :support_deprecation do
+      match(notify_expectation_failures: true) do |cls|
+        Deprecation.deprecate_methods(cls, :some_deprecated_method)
+        expect(logger).to receive(:warn).with(/called from old_method/)
+        expect(cls.new.send(:old_method)).to eq true
+      end
+    end
+
+    it "should provide a useful deprecation trace" do
+      expect(B).to support_deprecation
+    end
+
+    context "with a class-level #to_s method" do
+      before do
+        class << B
+          def to_s
+            "I am not a valid Ruby constant"
+          end
+        end
+      end
+
+      after do
+        class << B
+          remove_method :to_s
+        end
+      end
+
+      it "should still provide a useful deprecation trace" do
+        expect(B).to support_deprecation
+      end
+    end
+  end
+
 end
